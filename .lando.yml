@@ -1,0 +1,4 @@
+name: midcamp-fun
+recipe: drupal7
+config:
+  webroot: web
