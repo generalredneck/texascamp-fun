@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * @file
+ * Library Example Module.
+ */
+
+/**
+ * Implements hook_libraries_info().
+ */
+function library_example_block_libraries_info() {
+  return array(
+    'php-loremipsum' => array(
+      'name' => 'PHP Lorem ipsum',
+      'vendor url' => 'https://github.com/joshtronic/php-loremipsum',
+      'download url' => 'https://github.com/joshtronic/php-loremipsum',
+      'version' => '1.0.4',
+      'xautoload' => function($adaptor) {
+        $adaptor->composerJson('composer.json');
+      },
+    ),
+  );
+}
+/**
+ * Implements hook_xautoload_example_registered_blocks_alter().
+ */
+function library_example_block_xautoload_example_registered_blocks_alter(&$blocks) {
+  $blocks[] = '\Drupal\library_example_block\XEBlock\LibExample';
+}
+
+/**
+ * Load the php-loremipsum library.
+ */
+function library_example_block_load_library() {
+  // TODO: Fix dependencies to check for libraries if composer autoload doesn't exist.
+  if (!class_exists('\joshtronic\LoremIpsum', TRUE)) {
+    if (!module_exists('libraries')) {
+      throw new \Exception('Include php-loremipsum via composer or enable libraries.');
+    }
+    $library = libraries_load('php-loremipsum');
+    if ($library['loaded'] === FALSE) {
+      throw new \Exception("php-loremipsum didn't load!");
+    }
+  }
+}

@@ -1,0 +1,6 @@
+name = Library Example Block
+description = Example of using Xautoload to load libraries
+core = 7.x
+package = Midcamp Fun
+
+dependencies[] = xautoload_example

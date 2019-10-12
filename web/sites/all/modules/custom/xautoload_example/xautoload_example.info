@@ -1,0 +1,6 @@
+name = Xautoload Example
+description = Example of using Xautoload to build a page
+core = 7.x
+package = Midcamp Fun
+
+dependencies[] = xautoload:xautoload

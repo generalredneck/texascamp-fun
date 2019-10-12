@@ -1,0 +1,87 @@
+<?php
+
+use Drupal\xautoload_example\XEBlockInterface;
+use Drupal\xautoload_example\SimpleObject;
+
+/**
+ * @file
+ * Xautoload Example main module file.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function xautoload_example_menu() {
+  $items['xautoload_example'] = array(
+    'page callback' => 'xautoload_example_page_render',
+    'access callback' => TRUE,
+  );
+  return $items;
+}
+
+/**
+ * Sample page output function.
+ */
+function xautoload_example_page_render() {
+  $obj = new SimpleObject();
+  return $obj->render();
+}
+
+
+/**
+ * A custom registery of blocks that we will load using a block interface.
+ *
+ * @return array
+ *   An array of class names.
+ */
+function xautoload_example_registered_blocks() {
+  // In composer example... we could use classfinder.
+  $blocks = array(
+    '\Drupal\xautoload_example\XEBlock\Example',
+  );
+  drupal_alter(__FUNCTION__, $blocks);
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function xautoload_example_block_info() {
+  $info = array();
+  $blocks = xautoload_example_registered_blocks();
+  foreach ($blocks as $blockclass) {
+    $block = new $blockclass();
+    if (!$block instanceof XEBlockInterface) {
+      continue;
+    }
+    // Limits the block to one per class... ¯\_(ツ)_/¯ This is an example!
+    $info[$block->getMachineName()] = $block->getInfo();
+  }
+  return $info;
+}
+
+/*
+ * There are also:
+ *   - hook_block_configure()
+ *   - hook_block_save()
+ *   - hook_block_view()
+ * We only care about the view.
+ */
+
+/**
+ * Implements hook_block_view().
+ */
+function xautoload_example_block_view($delta = '') {
+  $output = array();
+  foreach (xautoload_example_registered_blocks() as $blockclass) {
+    $block = new $blockclass();
+    if (!$block instanceof XEBlockInterface || $delta != $block->getMachineName()) {
+      continue;
+    }
+    $output = array(
+      'subject' => $block->getSubject(),
+      'content' => $block->render(),
+    );
+  }
+  return $output;
+}
