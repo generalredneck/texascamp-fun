@@ -1,4 +1,8 @@
-name: midcamp-fun
+name: texascamp-fun
 recipe: drupal7
 config:
+  xdebug: true
   webroot: web
+tooling:
+  drush:
+    cmd: "drush --root=/app/web"
